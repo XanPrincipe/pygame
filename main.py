@@ -52,61 +52,66 @@ jump_height = 7     # Высота прыжка
 enemy_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(enemy_timer, 2000)
 
+gameplay = True
+
+
 running = True
 while running: # Аналог из tkinter win.mainloop()
 
     screen.blit(bg, (bgx, 0))
     screen.blit(bg, (bgx + 1280, 0))
 
-# Создаем коллизию
-    player_rect = walk_right[0].get_rect(topleft=(player_x, player_y))
-# Создаем переменную el, которая принимает картинку enemy и координаты из списка
-    if enemy_list_in_game:
-        for el in enemy_list_in_game:
-            screen.blit(enemy, el)
-            el.x -= 10
-# Задаем условия столкновения
-            if player_rect.colliderect(el):
-                print ("Вы проиграли")
+    if gameplay:
+    # Создаем коллизию
+        player_rect = walk_right[0].get_rect(topleft=(player_x, player_y))
+    # Создаем переменную el, которая принимает картинку enemy и координаты из списка
+        if enemy_list_in_game:
+            for el in enemy_list_in_game:
+                screen.blit(enemy, el)
+                el.x -= 10
+    # Задаем условия столкновения
+                if player_rect.colliderect(el):
+                    gameplay = False
 
 
-# Проверка на движение влево/вправо
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_a]:
-        screen.blit(walk_left[player_anim_count], (player_x, player_y))
-    else:
-        screen.blit(walk_right[player_anim_count], (player_x, player_y))
-
-# Движение персонажа
-    if keys[pygame.K_a] and player_x > 50:   # Если нажата кнопка влево и координата по x больше 50, то персонаж дальше не идет
-        player_x -= player_speed + 6
-    elif keys[pygame.K_d] and player_x < 1230:   # Если нажата кнопка вправо и координата по x меньше 200, то персонаж дальше не идет
-        player_x += player_speed
-# Прыжок
-    if not is_jump:
-        if keys[pygame.K_w] or keys[pygame.K_SPACE]:
-            is_jump = True
-    else:
-        if jump_height >= -7:
-            if jump_height > 0:
-                player_y -= (jump_height ** 2) / 2
-            else:
-                player_y += (jump_height ** 2) / 2
-            jump_height -= 1
+    # Проверка на движение влево/вправо
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_a]:
+            screen.blit(walk_left[player_anim_count], (player_x, player_y))
         else:
-            is_jump = False
-            jump_height = 7
-# Смена анимации при движении
-    if player_anim_count == 3:
-        player_anim_count = 0
-    else:
-        player_anim_count += 1
-# Скорость смены задника
-    bgx -= 6
-# Условие движения экрана
-    if bgx <= -1280:
-        bgx = 0
+            screen.blit(walk_right[player_anim_count], (player_x, player_y))
 
+    # Движение персонажа
+        if keys[pygame.K_a] and player_x > 50:   # Если нажата кнопка влево и координата по x больше 50, то персонаж дальше не идет
+            player_x -= player_speed + 6
+        elif keys[pygame.K_d] and player_x < 1230:   # Если нажата кнопка вправо и координата по x меньше 200, то персонаж дальше не идет
+            player_x += player_speed
+    # Прыжок
+        if not is_jump:
+            if keys[pygame.K_w] or keys[pygame.K_SPACE]:
+                is_jump = True
+        else:
+            if jump_height >= -7:
+                if jump_height > 0:
+                    player_y -= (jump_height ** 2) / 2
+                else:
+                    player_y += (jump_height ** 2) / 2
+                jump_height -= 1
+            else:
+                is_jump = False
+                jump_height = 7
+    # Смена анимации при движении
+        if player_anim_count == 3:
+            player_anim_count = 0
+        else:
+            player_anim_count += 1
+    # Скорость смены задника
+        bgx -= 6
+    # Условие движения экрана
+        if bgx <= -1280:
+            bgx = 0
+    else:
+        screen.fill((87, 88, 89))
     pygame.display.update()     # Обновляет изображения на экране
 
     for event in pygame.event.get():    # Получаем список из всех возможных событий
