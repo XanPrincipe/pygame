@@ -52,6 +52,7 @@ jump_height = 7     # Высота прыжка
 enemy_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(enemy_timer, 2000)
 
+# Подключаем шрифт и задаем параметры текста
 label = pygame.font.Font("fonts/SourGummy-VariableFont_wdth,wght.ttf", 40)
 lose_label = label.render("You Lost", False,(193,196,199))
 label_rect = lose_label.get_rect(center=(640, 360))
@@ -69,14 +70,16 @@ while running: # Аналог из tkinter win.mainloop()
     if gameplay:
     # Создаем коллизию
         player_rect = walk_right[0].get_rect(topleft=(player_x, player_y))
-    # Создаем переменную el, которая принимает картинку enemy и координаты из списка
+
+    # Создаем переменную el, которая принимает картинку enemy и координаты из списка, добавляем enumerate для того,
+    # чтобы удобно индексировать врагов и удалять их после исчезновения с экрана
         if enemy_list_in_game:
             for (i, el) in enumerate (enemy_list_in_game):
                 screen.blit(enemy, el)
-                el.x -= 10
+                el.x -= 10      # Движение врага
 
-                if el.x < -20:
-                    enemy_list_in_game.pop(0)
+                if el.x < -10:
+                    enemy_list_in_game.pop(0)   # Без 0 неправильно чистилось
 
     # Задаем условия столкновения
                 if player_rect.colliderect(el):
@@ -120,16 +123,18 @@ while running: # Аналог из tkinter win.mainloop()
         if bgx <= -1280:
             bgx = 0
     else:
+        # Вывод экрана проигрыша вместе с текстом
         screen.fill((87, 88, 89))
         screen.blit(lose_label, label_rect)
         screen.blit(restart_label, restart_label_rect)
 
-        mouse = pygame.mouse.get_pos()
-        if restart_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
+        # Условия рестарта
+        mouse = pygame.mouse.get_pos()      # Этот метод присваивает координаты x, y переменной mouse
+        if restart_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:    # collidepoint - проверяет соприкосновение прямоугольника текста рестарта с мышью
             gameplay = True
             player_x = 150
             player_y = 565
-            enemy_list_in_game.clear()
+            enemy_list_in_game.clear()  # Чистим врагов
     pygame.display.update()     # Обновляет изображения на экране
 
     for event in pygame.event.get():    # Получаем список из всех возможных событий
