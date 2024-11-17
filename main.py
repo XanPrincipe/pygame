@@ -52,8 +52,13 @@ jump_height = 7     # Высота прыжка
 enemy_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(enemy_timer, 2000)
 
-gameplay = True
+label = pygame.font.Font("fonts/SourGummy-VariableFont_wdth,wght.ttf", 40)
+lose_label = label.render("You Lost", False,(193,196,199))
+label_rect = lose_label.get_rect(center=(640, 360))
+restart_label = label.render("Play again", False,(115,132,148))
+restart_label_rect = restart_label.get_rect(center=(640, 460))
 
+gameplay = True
 
 running = True
 while running: # Аналог из tkinter win.mainloop()
@@ -66,9 +71,13 @@ while running: # Аналог из tkinter win.mainloop()
         player_rect = walk_right[0].get_rect(topleft=(player_x, player_y))
     # Создаем переменную el, которая принимает картинку enemy и координаты из списка
         if enemy_list_in_game:
-            for el in enemy_list_in_game:
+            for (i, el) in enumerate (enemy_list_in_game):
                 screen.blit(enemy, el)
                 el.x -= 10
+
+                if el.x < -20:
+                    enemy_list_in_game.pop(0)
+
     # Задаем условия столкновения
                 if player_rect.colliderect(el):
                     gameplay = False
@@ -112,6 +121,15 @@ while running: # Аналог из tkinter win.mainloop()
             bgx = 0
     else:
         screen.fill((87, 88, 89))
+        screen.blit(lose_label, label_rect)
+        screen.blit(restart_label, restart_label_rect)
+
+        mouse = pygame.mouse.get_pos()
+        if restart_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
+            gameplay = True
+            player_x = 150
+            player_y = 565
+            enemy_list_in_game.clear()
     pygame.display.update()     # Обновляет изображения на экране
 
     for event in pygame.event.get():    # Получаем список из всех возможных событий
@@ -122,4 +140,4 @@ while running: # Аналог из tkinter win.mainloop()
            enemy_list_in_game.append(enemy.get_rect(topleft=(1290, 587)))
 
 # Скоросить движения персонажа и также смены задника
-    clock.tick(30)
+    clock.tick(60)
