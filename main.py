@@ -43,7 +43,7 @@ power_up = []
 bgx = 0
 bg_lose_x = 0
 
-player_speed = 7  # Скорость персонажа
+player_speed = 2  # Скорость персонажа
 player_x = 150  # Координата персонажа по x
 player_y = 565  # Координата персонажа по y
 
@@ -120,7 +120,7 @@ while running:  # Аналог из tkinter win.mainloop()
         if enemy_list_in_game:
             for (i, el) in enumerate(enemy_list_in_game):
                 screen.blit(enemy, el)
-                el.x -= 10  # Движение врага
+                el.x -= 7  # Движение врага
 
                 if el.x < -10:
                     enemy_list_in_game.pop(0)  # Без 0 неправильно чистилось
@@ -177,7 +177,7 @@ while running:  # Аналог из tkinter win.mainloop()
         else:
             player_anim_count += 1
         # Скорость смены задника
-        bgx -= 6
+        bgx -= 4
         # Условие движения экрана
         if bgx <= -1280:
             bgx = 0
